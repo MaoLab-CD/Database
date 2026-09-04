@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: sample-admin-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: sample_admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # 新数据卷首次启动只执行当前整合版 schema；历史迁移不会自动重复执行。
+      - ./backend/sql/schema_latest.sql:/docker-entrypoint-initdb.d/001_schema_latest.sql:ro
+      # 增量迁移保留在容器 /sql，已有数据库按需手动执行。
+      - ./backend/sql:/sql:ro
+    ports:
+      # 只绑定本机回环，供 SSH 隧道（Navicat）访问，不对内网/公网暴露数据库。
+      # 外部工具通过 SSH 隧道访问；H100 当前宿主机端口使用 5432。
+      - "127.0.0.1:${DB_HOST_PORT:-5432}:5432"
+    networks:
+      - sample-admin-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sample-admin-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # 上传文件与备份持久化
+      - ./backend/uploads:/app/uploads
+      - ./backend/backups:/app/backups
+      - ${HOST_SEQUENCING_ROOT:-./data/sequencing}:/data/sequencing:ro
+      - type: bind
+        source: ${HOST_NAS_SEQUENCING_ROOT:-./data/sequencing-nas}
+        target: /data/sequencing-nas
+        read_only: true
+        bind:
+          create_host_path: true
+    depends_on:
+      - postgres
+    networks:
+      - sample-admin-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: sample-admin-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-8090}:80"   # 宿主机访问端口，默认 8090（8080 已被其他服务占用）
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    networks:
+      - sample-admin-net
+
+volumes:
+  pgdata:
+
+networks:
+  sample-admin-net:
+    driver: bridge

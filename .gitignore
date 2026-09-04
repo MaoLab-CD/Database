@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+backend/.query-venv/
+.pytest_cache/
+.pytest_tmp*/
+.codex_pytest_tmp/
+pytest-cache-files-*/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env.example
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# App artifacts
+backend/uploads/
+backend/backups/
+backend/logs/
+outputs/
+.codex-pet-runs/
+.codex_tmp/
+.tmp/
+*.log
+*.tmp
+*.bak
+
+# Internal documentation and agent/development notes
+# README.md remains tracked as the public project introduction.
+docs/
+AGENTS.md
+README.internal.md
+.agents/
+.sisyphus/
+deploy/
+
+# Data / binary attachments with possible sensitive sample information
+附件/*.xlsx
+附件/*.xls
+附件/*.csv
+附件/*.tsv
+附件/*.docx
+附件/*.pptx
+
+# Sequencing / archive outputs should never be committed
+*.fq
+*.fq.gz
+*.fastq
+*.fastq.gz
+*.bam
+*.bai
+*.vcf
+*.vcf.gz
+*.zip
+*.tar
+*.tar.gz
+*.7z

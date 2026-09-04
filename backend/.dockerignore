@@ -1,0 +1,32 @@
+# Python 缓存与虚拟环境
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.query-venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 运行时数据 / 状态（运行时通过 volume 提供，不打入镜像）
+uploads/
+backups/
+logs/
+*.log
+
+# 敏感配置
+.env
+.env.*
+
+# 版本控制与 IDE
+.git/
+.gitignore
+.idea/
+.vscode/
+
+# 临时文件
+*.tmp
+*.bak
+Dockerfile
+.dockerignore

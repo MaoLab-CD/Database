@@ -1,0 +1,7 @@
+BEGIN;
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS password_changed_at TIMESTAMPTZ NULL,
+    ADD COLUMN IF NOT EXISTS password_reset_required BOOLEAN NOT NULL DEFAULT false;
+
+COMMIT;
